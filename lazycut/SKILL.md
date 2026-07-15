@@ -1,6 +1,6 @@
 ---
 name: lazycut
-description: 剪口播/教学类短视频:以逐字稿为中心、和创作者协作,全免费纯本地流水线(Whisper 转录/剪辑、PIL 烧中英文字幕、Remotion 卡片动效、ClearVoice AI 音频),produce.py 一条命令+哈希缓存跑全链,交付=预览mp4+CapCut草稿双件套。Use when 用户要剪口播视频/加字幕/加卡片/增强音频,或说「剪这条视频」「把录好的剪出来」「转逐字稿」「按脚本剪」「加字幕」「做成成片」「接着剪/续跑」「出草稿」。竖屏短视频为主。
+description: 剪口播/教学类短视频:以逐字稿为中心、和创作者协作,全免费纯本地流水线(Whisper 转录/剪辑、PIL 烧中英文字幕、Remotion 卡片动效、ClearVoice AI 音频),produce.py 一条命令+哈希缓存跑全链,交付=预览mp4+用户所选剪辑器的可编辑工程(开箱时问)。Use when 用户要剪口播视频/加字幕/加卡片/增强音频,或说「剪这条视频」「把录好的剪出来」「转逐字稿」「按脚本剪」「加字幕」「做成成片」「接着剪/续跑」「出草稿」。竖屏短视频为主。
 ---
 
 # lazycut · 口播视频 AI 剪辑(开源版)
@@ -65,8 +65,8 @@ style.json 的值或本机规则。**这是本 skill 和「参数固定的工具
    诊断五维(节奏/画面/字幕/内容/音频),计划编号成 P 条目创作者批。produce.py 的
    gates.plan_approved 就是这道闸的机器化。
 8. **渲染 → 自检 → 交付**:全链走 `produce.py <project.json>`(哈希缓存,改哪跑哪);
-   selfcheck 五项全绿+`audience_read.py` 观众流水稿过审才交付;交付=预览 mp4+CapCut 草稿
-   双件套;二次修改按协作协议,重生成前必跑 `draft_diff.py`,用户改过的草稿永不覆写。
+   selfcheck 五项全绿+`audience_read.py` 观众流水稿过审才交付;交付=预览 mp4+用户所选剪辑器的工程
+   (剪映/CapCut 草稿最深,EDL/OTIO/素材包兜底);二次修改按协作协议,重生成前必跑 `draft_diff.py`,用户改过的草稿永不覆写。
 
 > 动手前先读 **[reference/judgment.md](reference/judgment.md)**(错题本:真实项目磨出来的坑)。
 > 别一上来就想着跑脚本。

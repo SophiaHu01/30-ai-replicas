@@ -1,101 +1,126 @@
-# lazycut · 让你的 AI 编程助手变成剪辑师
+English | [简体中文](README.zh-CN.md)
 
-> 「挑战复刻 30 个 AI 产品」系列第 1 期:复刻 AI 剪辑产品(ChatCut 类)的核心能力。
-> 免费、全程本地、不上传任何内容,产出直接进你惯用的剪映/CapCut——不是死的 mp4,
-> 是分轨可编辑的草稿。
+# lazycut · Turn your AI coding assistant into a video editor
 
-## 它能做什么(和不能做什么,先说实话)
+> Episode 1 of "Replicating 30 AI Products": the core capabilities of AI video editors
+> (ChatCut and friends). Free, fully local, nothing uploaded — and the output goes
+> straight into **the editor you already use**: it asks which one during onboarding.
+> Deepest support today: CapCut/JianYing native drafts; Resolve/Premiere/FCP via
+> EDL/OTIO; a universal asset pack for anything else.
 
-| 能力 | 状态 | 说明 |
+## What it does (and doesn't — honesty first)
+
+| Capability | Status | Notes |
 |---|---|---|
-| AI 剪辑(删口头禅/停顿/重复录制) | ✅ | 重录自动聚类,默认取最后一遍,拿不准的问你 |
-| 用文字剪视频 | ✅ | 逐字稿就是遥控器,你划掉哪句就删哪句 |
-| 自动字幕(词级时间戳+重点词标黄) | ✅ | 按自然断句分页,永不机械切句 |
-| 静音录屏智能压缩 | ✅ | 按信息节拍变速:死时间快进/打字中速/出结果放慢 |
-| **草稿直出你的剪辑器** | ✅ 独门 | 剪映/CapCut 草稿,分轨可编辑,原理见下 |
-| 人声降噪增强 | ✅ 可选 | 本地模型,弱机自动跳过 |
-| 动效(章节卡/图表/时间线等七种) | 🔧 接线中 | 组件库已建成,与主链的接线在 CHANGELOG 跟踪 |
-| 长视频切 Shorts | 🔧 方法论 | 结构诊断给切点建议,一键成片在路上 |
-| 实时预览面板 | ❌ 不做 | 你的剪映就是面板 |
-| AI 生成素材(配音/音乐/图片) | ❌ 不做 | 用专门的工具更好,剪辑器音乐库就很全 |
+| AI editing (fillers / pauses / retakes) | ✅ | Retakes auto-clustered, last take wins by default, ambiguous ones go to you |
+| Text-based editing | ✅ | The transcript is the remote control: strike a sentence, the cut follows |
+| Captions (word-level timing + keyword highlights) | ✅ | Paged by natural speech pauses, never mechanically |
+| Smart-paced silent screen recordings | ✅ | Dead time fast-forwarded, typing medium, reveals slowed |
+| **Editable project into your editor** | ✅ signature | Asked at onboarding; CapCut/JianYing drafts deepest, EDL/OTIO/asset-pack fallback |
+| Voice cleanup | ✅ optional | Local model; skipped automatically on weak machines |
+| Motion graphics (7 component types) | 🔧 wiring | Component library built; pipeline wiring tracked in CHANGELOG |
+| Long video → Shorts | 🔧 methodology | Structure diagnosis suggests cut points; one-click is on the roadmap |
+| Real-time preview panel | ❌ won't build | Your editor *is* the panel |
+| AI-generated assets (voice/music/images) | ❌ won't build | Dedicated tools do it better; your editor's library is rich |
 
-成本:**0 元**。模型(语音识别/降噪)首次运行自动下载到你电脑,之后永远本地跑。
-你唯一已有的成本是 AI 编程助手本身(Claude Code / Cursor 等)。
+Cost: **$0**. Models (speech recognition, denoising) download to your machine on first
+run and stay local. The only cost you already carry is your AI coding assistant.
 
-## 快速开始(三步)
+## Quick start (three steps)
 
 ```bash
 git clone https://github.com/SophiaHu01/lazyskills.git
 cd lazyskills/lazycut
-python3 scripts/doctor.py     # 体检:缺什么,把输出整段贴给你的 AI,它会帮你装
+python3 scripts/doctor.py   # health check — paste the output to your AI, it installs what's missing
 ```
 
-然后对你的 AI 说:**「读 lazycut/SKILL.md,用 lazycut 帮我剪 <素材文件夹>」**。
-首次使用它会引导你做三件事(共约五分钟):认领你的剪辑软件、回答六个风格问题、
-(如果你从没建过草稿)做一次 40 秒的「教 AI 认识你的剪映」。
+Then tell your AI: **"Read lazycut/SKILL.md and use lazycut to edit `<footage folder>`."**
+First use walks you through three things (~5 minutes): claiming your editor, a six-question
+style quiz, and — if you've never created a draft — a 40-second "introduce your editor to
+the AI" ritual.
 
-## 工作原理:一条视频的十站旅程
+## How it works: ten stations
 
-1. **建档**——给项目建一个 git 记账本:素材清单、每次改动的日志。第一遍的理解只做
-   一次,之后所有修改只看「改了哪」,不重看全片。
-2. **听写**——Whisper(OpenAI 开源)把每个字变成文字+精确到秒的时间戳,本地跑。
-3. **锁定(独门之一:转录锁)**——只听写一次,锁死为唯一真相源,之后所有剪辑靠数学
-   换算,永不重听。为什么:语音识别每听一遍,错的字还不一样,不锁就是打不完的地鼠。
-4. **挑重录**——同一句录了三遍?相邻句相似度聚类,默认留最后一遍(行业惯例),
-   疑似「你改了说法」的单独列出来问你;排比句有防误伤规则。
-5. **想结构**——先想后剪:至少两个候选结构对着爆款检查表打分;全文通读查表意
-   (逻辑断没断/指代悬没悬空/承诺兑没兑现);跨段语义重复机器检测。
-   **精修逐字稿+剪辑风格问题必须发给你文字确认,你点头才动剪**(硬停点1)。
-6. **下刀**——剪辑坐标永远「用你的原话查表」,不手写秒数(人写数字必错);每条新
-   接缝做「朗读测试」:后句以「也/所以/那」开头而前文被删了的,判断层,必须补桥。
-7. **字幕**——按你说话的自然停顿分页;超长句平衡断行,断点避开英文单词;重点词
-   放大标黄;左右留安全边,不被点赞栏挡;横竖屏断行口径自适应。
-8. **动效**——AI 通读逐字稿标「动画时刻」(报数字→数字揭示,多个数字→图表,讲流程
-   →时间线…),**每个动画必须写出「为什么」,写不出就删**;动效脚本发你批,批了才渲
-   (硬停点2)。
-9. **质检**——机器查五项(黑帧/爆音/字幕空洞/静默区死寂/响度),一项不过不交付;
-   再把「字幕+卡片+大字」合成一份观众实际接收的信息流,AI 通读查全局(新名词有没有头/
-   条件句的另一半有没有着落)。
-10. **交付**——预览 mp4+剪辑器草稿双件套,报路径为止;**发到哪里,问了你才动**(硬停点3)。
+1. **Archive** — each project gets a git ledger: asset map, change log. The expensive
+   full-understanding pass happens once; every revision after works off diffs.
+2. **Transcribe** — Whisper (open-source) turns every word into text with per-second
+   timestamps, locally.
+3. **Lock (signature #1: the transcript lock)** — transcribe once, lock it as the single
+   source of truth; all subsequent edits are derived by time mapping, never re-transcribed.
+   Why: every re-transcription produces *different* typos — an unwinnable whack-a-mole
+   unless you kill it at the root.
+4. **Pick takes** — said the same line three times? Adjacent-similarity clustering keeps
+   the last take (industry convention), flags "did you rephrase?" cases for you, and has
+   guards against false-positives on parallel sentence structures.
+5. **Think before cutting** — at least two candidate structures scored against a
+   hook/retention checklist; a full read for meaning (broken logic, dangling references,
+   unkept promises); machine detection of semantic repetition.
+   **The polished transcript plus editing-style questions go to you for written
+   confirmation — cutting starts only after you approve** (hard stop #1).
+6. **Cut** — every cut coordinate is looked up from your actual words, never hand-typed
+   seconds; every new seam gets a "read-aloud test", and broken joints must be bridged.
+7. **Captions** — paged by your natural pauses; long lines balanced without splitting
+   English words; keywords enlarged and highlighted; safe margins for platform UI;
+   line-width adapts to portrait/landscape.
+8. **Motion graphics** — the AI reads the transcript and marks "animation moments"
+   (a number → count-up, several numbers → chart, a process → timeline…). **Every
+   animation must justify itself in writing; unjustifiable ones are cut.** The motion plan
+   goes to you for approval before rendering (hard stop #2).
+9. **QA** — five machine checks (black frames / clipping / caption gaps / dead-air in
+   quiet zones / loudness), any failure blocks delivery; then the captions, cards and
+   emphasis are merged into one "what the viewer actually receives" stream and read
+   end-to-end for global coherence.
+10. **Deliver** — a preview mp4 plus your editor's project, paths reported. **Nothing is
+    sent anywhere without your explicit yes** (hard stop #3).
 
-## 两个独门技术(别处没有)
+## Two signature mechanisms
 
-**转录锁**(第 3 站):业内通行做法是每次重剪重转录,于是每轮冒出新错别字。我们只
-转录一次、锁死,之后一切剪辑通过时间映射推算——错别字问题从根上消失。
+**The transcript lock** (station 3): the industry default is to re-transcribe after every
+recut, which spawns fresh typos every round. We transcribe once, lock it, and derive all
+edits via time mapping — the problem disappears at its root.
 
-**模板克隆法**(草稿直出的核心):剪映草稿格式私有、无文档,硬编码格式的工具全活在
-「版本一升就坏」的恐惧里。我们不硬编码——**读你自己电脑上的真实草稿当格式模板**,
-照着它写新草稿,所以格式永远和你装的版本一致,剪映怎么升级都不怕。代价是你机器上
-至少要有一个草稿(没有?40 秒引导教你建)。配套「身份链自检」每次生成后验证素材
-登记完整,坏草稿不会交到你手上。
+**Template cloning** (the draft exporter): editor draft formats are proprietary and
+undocumented; hardcoded-schema tools live in fear of version updates. We don't hardcode —
+**we read a real draft from *your* machine as the format template** and write new drafts
+in its image. Whatever version you run is, by construction, the version we support.
+The price: your machine needs at least one existing draft (no drafts? a 40-second guided
+ritual creates one). A built-in "identity chain" self-check validates every generated
+draft before it reaches you.
 
-## 它怎么越用越懂你
+## How it learns you
 
-- **风格资产**(assets/style.json):字幕字号/重点色/语速/断行/尾卡品牌…全是数据,
-  改文件=换风格,升级不覆盖。(部分参数与脚本的接线仍在补,进度见 CHANGELOG。)
-- **错题本**(reference/lessons.local.md):你每次纠正它,判例立刻记下;同类纠正第二次
-  出现,它提议固化成你的本机规则。规则从你的反馈里长出来——这是它和「参数固定的
-  工具」的本质区别。
+- **Style assets** (assets/style.json): caption size, highlight color, pacing, line width,
+  end-card branding — all data. Edit the file, change the style; upgrades never overwrite
+  it. (Some parameters are still being wired to the scripts — tracked in CHANGELOG.)
+- **The mistake journal** (reference/lessons.local.md): every correction you make becomes
+  a recorded case; a repeated correction becomes a proposed rule. Rules grow from your
+  feedback — that's the difference between this and a fixed-parameter tool.
 
-## 输出出口(不锁死你)
+## Output formats (no lock-in)
 
-剪映/CapCut 草稿(推荐)· EDL+SRT(DaVinci/Premiere,beta)· OTIO(时间线交换格式,
-需 opentimelineio)· 分层素材包(底片+SRT+卡片 PNG,任何剪辑软件都认)· 成品 mp4。
+CapCut/JianYing native draft (deepest) · EDL + SRT (DaVinci/Premiere, beta) · OTIO
+(timeline interchange, needs opentimelineio) · layered asset pack (clean base + SRT +
+card PNGs — any editor accepts it) · finished mp4.
 
-## 隐私与边界
+## Privacy & boundaries
 
-- 全程本地运行,**不上传任何内容**:没有账号、没有服务器、没有遥测。
-- 任何对外发送(哪怕是给你自己发消息)都必须你在对话里明确点头。
-- 它管口播和录屏演示类视频;卡点、产品展示、vlog 是不同的活(本系列后续期数)。
+- Fully local. **Nothing is uploaded.** No account, no server, no telemetry.
+- Any outbound send — even to yourself — requires your explicit confirmation in chat.
+- Scope: talking-head and screen-demo videos. Beat-synced montages, product showcases
+  and mood vlogs are different animals (later episodes).
 
-## 常见问题
+## FAQ
 
-**Q:为什么必须先有一个草稿?** 模板克隆法要读你本机的真实草稿学格式——这是
-「剪映升级不怕」的代价,40 秒引导做一次即可(拖任意一段视频+加一行字幕)。
-**Q:Windows 能用吗?** 代码路径已通(转录/OCR/字体/草稿目录都有 Windows 分支),
-真机实测征集中——跑通或跑挂都请开 issue,首批实测者进 README 鸣谢。
-**Q:电脑要多好?** 近五年主流电脑都行;人声增强模型较重,弱机自动跳过该步。
-**Q:出问题怎么办?** 把报错整段贴给你的 AI——报错都写成「AI 读了就知道怎么修」的
-格式;修不了开 issue,你的报错就是下个版本的改进清单。
+**Q: Why do I need an existing draft for draft export?** Template cloning learns the
+format from a real draft on your machine — that's the price of being upgrade-proof.
+A 40-second guided step (drop any video in, add one caption line) does it once per machine.
+**Q: Windows?** Code paths are in place (transcription/OCR/fonts/draft directories all
+have Windows branches); full real-machine testing is being crowdsourced — open an issue
+whether it works or breaks, first testers get credited.
+**Q: How strong a machine?** Any mainstream computer from the last five years; the voice
+enhancement model is heavy and auto-skips on weak machines.
+**Q: Something broke?** Paste the full error to your AI — every error message is written
+to be self-explanatory to an AI assistant. If that fails, open an issue: your error report
+is the next version's changelog.
 
 License: MIT
