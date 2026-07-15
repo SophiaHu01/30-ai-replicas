@@ -55,6 +55,13 @@ separate tracks. Tweak anything by hand and export from the editor as usual.
 
 (Screenshots of the CapCut draft list and timeline are coming shortly.)
 
+## One honest heads-up
+
+This skill **may not work on every machine** — hardware, OS and editor versions vary
+wildly. If anything breaks, don't fight it alone: ping me on Xiaohongshu/Douyin
+(**八氧化索(AI 版)**, XHS 26872862617 · Douyin 54669229545) or open a GitHub issue with
+the error. Every report becomes a fix; early bug-hunters get credited in the README.
+
 ## FAQ
 
 **Changed your mind mid-way?** Just say it — "delete sentence 3", "bigger captions".
